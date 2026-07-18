@@ -29,7 +29,7 @@ $permres = $permresult->fetch(PDO::FETCH_ASSOC);
                 <?php } ?>
                 <div class="info">
                     <div class="title">
-                        <a target="_blank" href="https://codingcyber.org/"><?php if(!empty($userres['fname']) & ($permres['show_fname'] == 1)){ echo $userres['fname']; } ?> <?php if(!empty($userres['lname']) & ($permres['show_lname'] == 1)){ echo $userres['lname']; } ?></a>
+                        <?php if(!empty($userres['fname']) & ($permres['show_fname'] == 1)){ echo $userres['fname']; } ?> <?php if(!empty($userres['lname']) & ($permres['show_lname'] == 1)){ echo $userres['lname']; } ?>
                     </div>
                     <div class="desc"><?php if(!empty($userres['gender']) & ($permres['show_gender'] == 1)){ echo $userres['gender']; } ?></div>
                     <div class="desc"><?php if(!empty($userres['age']) & ($permres['show_age'] == 1)){ echo $userres['age']; } ?></div>

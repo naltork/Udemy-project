@@ -1,4 +1,12 @@
 <!-- Navigation -->
+ <?php
+    // Look up the current user's username for the public profile link.
+    $navsql = "SELECT username FROM users WHERE id=?";
+    $navresult = $db->prepare($navsql);
+    $navresult->execute(array($_SESSION['id']));
+    $navuser = $navresult->fetch(PDO::FETCH_ASSOC);
+    $profile_username = ($navuser !== false) ? $navuser['username'] : '';
+?>
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -17,7 +25,7 @@
                 <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="edit-profile.php"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <li><a href="profile/<?php echo $profile_username; ?>"><i class="fa fa-user fa-fw"></i> User Profile</a>
                 </li>
                 <!-- <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li> -->
