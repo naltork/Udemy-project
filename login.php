@@ -124,10 +124,24 @@ if(isset($_POST) & !empty($_POST)){
 
             
         }else{
-            $errors[] = "User Name / E-Mail Not Valid";
+            // check if the account exists but is not activated yet
+            $inactsql = "SELECT * FROM users WHERE ";
+            if(filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
+                $inactsql .= "email=?";
+            }else{
+                $inactsql .= "username=?";
+            }
+            $inactsql .= " AND activate=0";
+            $inactresult = $db->prepare($inactsql);
+            $inactresult->execute(array($_POST['email']));
+            if($inactresult->rowCount() == 1){
+                $errors[] = "Your account is not activated yet. Please check your email for the activation link.";
+            }else{
+                $errors[] = "User Name / E-Mail Not Valid";
+            }
             // Insert Failed Login Attempt to user_activity table
         }
-    }
+     }
 }
 // Create CSRF token
 $token = md5(uniqid(rand(), TRUE));

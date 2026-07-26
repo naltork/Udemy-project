@@ -12,7 +12,9 @@ require 'PHPMailer-master/src/Exception.php';
 require 'PHPMailer-master/src/PHPMailer.php';
 require 'PHPMailer-master/src/SMTP.php';
 
-$url = "http://localhost/Secure-User-Registration-Login-Reset-Password-Portal/";
+// Build the base URL dynamically so activation links work regardless of folder name / port
+$url = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http')
+        . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
 $secret = "6LfVZn0UAAAAAFOgvkH4AqGD8NwNy0KvxMFBkUL_";
 $response = null;
 $reCaptcha = new ReCaptcha($secret);
@@ -117,7 +119,7 @@ if(isset($_POST) & !empty($_POST)){
                     $messages[] = 'Adding User Registration Log Entry';
 
                     // Generating and Inserting Activation Token in DB Table - user_active
-                    $active_token = md5($_POST['uname']).time();
+                    $active_token = bin2hex(random_bytes(32));
                     $activesql = "INSERT INTO user_active (uid, active_token) VALUES (:uid, :active_token)";
                     $activeresult = $db->prepare($activesql);
                     $values = array(':uid'              => $userid,
@@ -126,7 +128,7 @@ if(isset($_POST) & !empty($_POST)){
                     $activeresult->execute($values);
 
                     // send email to registered user
-                    /*
+                    $activation_link = "{$url}activate.php?key={$active_token}&id={$userid}";
                     $mail = new PHPMailer(true);
 
                     try {
@@ -147,14 +149,16 @@ if(isset($_POST) & !empty($_POST)){
                         // Content
                         $mail->isHTML(true);                                  // Set email format to HTML
                         $mail->Subject = 'Verify Your Email';
-                        $mail->Body    = "{$url}activate.php?key={$active_token}&id={$userid}</b>";
-                        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
+                        $mail->Body    = "Hi {$_POST['uname']},<br><br>"
+                                       . "Thanks for registering. Please click the link below to activate your account:<br><br>"
+                                       . "<a href='{$activation_link}'>Activate My Account</a><br><br>"
+                                       . "Or copy this URL into your browser:<br>{$activation_link}";
+                        $mail->AltBody = "Activate your account by visiting: {$activation_link}";
                         $mail->send();
                         $messages[] = 'Activation Email Sent, Follow the Instructions';
                     } catch (Exception $e) {
-                        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-                    } */
+                        $errors[] = "Activation email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                    } 
                 }
             }
         }else{

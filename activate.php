@@ -10,13 +10,16 @@ require 'PHPMailer-master/src/Exception.php';
 require 'PHPMailer-master/src/PHPMailer.php';
 require 'PHPMailer-master/src/SMTP.php';
 // check the activation key in user_active table
-$sql = "SELECT * FROM user_active WHERE active_token=:active_token AND uid=:uid";
-$result = $db->prepare($sql);
-$values = array(':active_token' => $_GET['key'],
-                ':uid'          => $_GET['id']
-                );
-$result->execute($values);
-$count = $result->rowCount();
+$count = 0;
+if(!empty($_GET['key']) && !empty($_GET['id'])){
+    $sql = "SELECT * FROM user_active WHERE active_token=:active_token AND uid=:uid";
+    $result = $db->prepare($sql);
+    $values = array(':active_token' => $_GET['key'],
+                    ':uid'          => $_GET['id']
+                    );
+    $result->execute($values);
+    $count = $result->rowCount();
+}
 if($count == 1){
     $messages[] = 'Account Exists';
     // if the activation key exists, make the user as active and remove the key
@@ -37,11 +40,10 @@ if($count == 1){
         $actsql = "INSERT INTO user_activity (uid, activity) VALUES (:uid, :activity)";
         $actresult = $db->prepare($actsql);
         $values = array(':uid'          => $_GET['id'],
-                        ':activity'     => 'User Registered'
+                        ':activity'     => 'Account Activated'
                         );
         $actresult->execute($values);
-        $messages[] = 'Adding User Registration Log Entry';
-
+        $messages[] = 'Adding Account Activation Log Entry';
         $usersql = "SELECT * FROM users WHERE id=?";
         $userresult = $db->prepare($usersql);
         $userresult->execute(array($_GET['id']));
