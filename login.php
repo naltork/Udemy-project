@@ -191,6 +191,12 @@ $_SESSION['csrf_token_time'] = time();
                         <input type="submit" class="btn btn-lg btn-success btn-block" value="Login" />
                     </fieldset>
                 </form>
+                <!-- <a href="reset.php" class="btn btn-lg btn-success btn-block">Reset Password</a> -->
+                <hr>
+                <p class="text-center">
+                    <a href="reset.php">Reset Password</a><br>
+                    <a href="register.php">Create an Account</a>
+                </p>
             </div>
         </div>
     </div>
