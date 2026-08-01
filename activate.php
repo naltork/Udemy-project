@@ -2,8 +2,10 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 session_start();
-include('includes/header.php'); 
+
 require_once('includes/connect.php');
+include('includes/header.php');
+include('includes/navigation.php');
 require_once('includes/smtp.php');
 
 require 'PHPMailer-master/src/Exception.php';
@@ -84,11 +86,12 @@ if($count == 1){
     $errors[] = "Failed to Activate Your Account, Check with Site Admin!";
 }
 ?>
+<div id="guest-wrapper">
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <div class="login-panel panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Please Register</h3>
+                <h3 class="panel-title">Account Activation</h3>
             </div>
             <div class="panel-body">
                 <?php
@@ -109,8 +112,13 @@ if($count == 1){
                         echo "</div>";
                     }
                 ?>
+                <hr>
+                <p class="text-center">
+                    <a href="login.php">Go to Sign In</a>
+                </p>
             </div>
         </div>
     </div>
+</div>
 </div>
 <?php include('includes/footer.php'); ?>

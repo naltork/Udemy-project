@@ -2,8 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 session_start();
-include('includes/header.php'); 
 require_once('includes/connect.php');
+include('includes/header.php');
+include('includes/navigation.php');
 require_once('includes/smtp.php');
 // Build the base URL dynamically so reset links work regardless of folder name / port
 $url = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http')
@@ -114,6 +115,7 @@ $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
 ?>
+<div id="guest-wrapper">
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <div class="login-panel panel panel-default">
@@ -149,6 +151,11 @@ $_SESSION['csrf_token_time'] = time();
                         <input type="submit" class="btn btn-lg btn-success btn-block" value="Reset Password" />
                     </fieldset>
                 </form>
+                <hr>
+                <p class="text-center">
+                    <a href="login.php">Back to Sign In</a>
+                </p>
+             </div>
             </div>
         </div>
     </div>

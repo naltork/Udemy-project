@@ -3,6 +3,7 @@ session_start();
 require_once('includes/connect.php');
 include('if-loggedin.php');
 include('includes/header.php'); 
+include('includes/navigation.php');
 $failmax = 5;
 if(isset($_POST) & !empty($_POST)){
     if(empty($_POST['email'])){ $errors[] = 'User Name / E-mail field is Required';}

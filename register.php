@@ -5,6 +5,7 @@ session_start();
 require_once('includes/connect.php');
 include('if-loggedin.php');
 include('includes/header.php'); 
+include('includes/navigation.php');
 include('recaptchalib.php'); 
 require_once('includes/smtp.php');
 
@@ -171,6 +172,7 @@ $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
 ?>
+<div id="guest-wrapper">
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <div class="login-panel panel panel-default">
@@ -201,11 +203,9 @@ $_SESSION['csrf_token_time'] = time();
                     <fieldset>
                         <div class="form-group">
                             <input class="form-control" placeholder="User Name" name="uname" id="uname" type="text" autofocus value="<?php if(isset($_POST['uname'])){ echo $_POST['uname']; } ?>">
-                            <span id="unameresults"></span>
                         </div>
                         <div class="form-group">
                             <input class="form-control" placeholder="E-mail" name="email" type="email" id="email" value="<?php if(isset($_POST['email'])){ echo $_POST['email']; } ?>">
-                            <span id="emailresults"></span>
                         </div>
                         <div class="form-group">
                             <input class="form-control" placeholder="Mobile" name="mobile" type="text" value="<?php if(isset($_POST['mobile'])){ echo $_POST['mobile']; } ?>">
@@ -217,72 +217,16 @@ $_SESSION['csrf_token_time'] = time();
                             <input class="form-control" placeholder="Repeat Password" name="passwordr" type="password">
                         </div>
                         <!-- Change this to a button or input when using this as a form -->
-                         <div class="g-recaptcha" data-sitekey="6LfVZn0UAAAAABGnxSUrSALkOTyQgZqcJE8FctZ3"></div>
                         <input type="submit" class="btn btn-lg btn-success btn-block" value="Register" />
                     </fieldset>
                 </form>
+                <hr>
+                <p class="text-center">
+                    Already registered? <a href="login.php">Sign In</a>
+                </p>
             </div>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    var unameresults = document.getElementById("unameresults");
-    var uname = document.getElementById("uname");
-
-    function getUserNameResults(){
-        var unameVal = uname.value;
-
-        if(unameVal.length < 1){
-            unameresults.style.display='none';
-        }
-
-        console.log('unameVal : ' + unameVal);
-        var xhr = new XMLHttpRequest();
-        var url = 'searchusername.php?search=' + unameVal;
-        // open function
-        xhr.open('GET', url, true);
-
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState == 4 && xhr.status == 200){
-                var text = xhr.responseText;
-                // console.log('response from searchresults.php : ' + xhr.responseText);
-                unameresults.innerHTML = text;
-                unameresults.style.display='block';
-            }
-        }
-        xhr.send();
-    }
-
-    uname.addEventListener("input", getUserNameResults);
-</script>
-<script type="text/javascript">
-    var emailresults = document.getElementById("emailresults");
-    var email = document.getElementById("email");
-
-    function getEmailResults(){
-        var emailVal = email.value;
-
-        if(emailVal.length < 1){
-            emailresults.style.display='none';
-        }
-
-        console.log('emailVal : ' + emailVal);
-        var xhr = new XMLHttpRequest();
-        var url = 'searchemail.php?search=' + emailVal;
-        // open function
-        xhr.open('GET', url, true);
-
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState == 4 && xhr.status == 200){
-                var text = xhr.responseText;
-                // console.log('response from searchresults.php : ' + xhr.responseText);
-                emailresults.innerHTML = text;
-                emailresults.style.display='block';
-            }
-        }
-        xhr.send();
-    }
-
-    email.addEventListener("input", getEmailResults);
-</script>
+</div>
 <?php include('includes/footer.php'); ?>

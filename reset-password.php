@@ -2,8 +2,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 session_start();
-include('includes/header.php'); 
 require_once('includes/connect.php');
+include('includes/header.php');
+include('includes/navigation.php');
 require_once('includes/smtp.php');
 require 'PHPMailer-master/src/Exception.php';
 require 'PHPMailer-master/src/PHPMailer.php';
@@ -166,6 +167,7 @@ if(!$reset_done){
     }
 }
 ?>
+<div id="guest-wrapper">
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
         <div class="login-panel panel panel-default">
@@ -205,6 +207,11 @@ if(!$reset_done){
                     </fieldset>
                 </form>
                 <?php } ?>
+                <hr>
+                <p class="text-center">
+                    <a href="login.php">Back to Sign In</a>
+                </p>
+             </div>
             </div>
         </div>
     </div>
