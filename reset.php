@@ -5,8 +5,9 @@ session_start();
 include('includes/header.php'); 
 require_once('includes/connect.php');
 require_once('includes/smtp.php');
-
-$url = "http://localhost/Secure-User-Registration-Login-Reset-Password-Portal/";
+// Build the base URL dynamically so reset links work regardless of folder name / port
+$url = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http')
+        . '://' . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . '/';
 
 require 'PHPMailer-master/src/Exception.php';
 require 'PHPMailer-master/src/PHPMailer.php';
@@ -53,9 +54,8 @@ if(isset($_POST) & !empty($_POST)){
         $res = $result->fetch(PDO::FETCH_ASSOC);
         $userid = $res['id'];
         if($count == 1){
-            $messages[] = 'User Name / Email exists, create reset token and send email';
-            // Generating and Inserting Activation Token in DB Table - user_active
-            $reset_token = md5($res['username']).time();
+            // Generating and Inserting Reset Token in DB Table - password_reset
+            $reset_token = bin2hex(random_bytes(32));
             $resetsql = "INSERT INTO password_reset (uid, reset_token) VALUES (:uid, :reset_token)";
             $resetresult = $db->prepare($resetsql);
             $values = array(':uid'              => $userid,
@@ -72,6 +72,7 @@ if(isset($_POST) & !empty($_POST)){
             $actresult->execute($values);
 
             // Send Email to User
+            $reset_link = "{$url}reset-password.php?key={$reset_token}&id={$userid}";
             $mail = new PHPMailer(true);
 
             try {
@@ -81,24 +82,27 @@ if(isset($_POST) & !empty($_POST)){
                 $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
                 $mail->Username   = $smtpuser;                     // SMTP username
                 $mail->Password   = $smtppass;                               // SMTP password
-                $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, `ssl` also accepted
+                $mail->SMTPSecure = 'tls';                                  // Enable TLS encryption, ssl also accepted
                 $mail->Port       = 587;                                    // TCP port to connect to
 
                 //Recipients
                 $mail->setFrom($fromemail, $fromname);
-                // TODO : update recipient email with dynamic email
                 $mail->addAddress($res['email'], $res['username']);     // Add a recipient
 
                 // Content
                 $mail->isHTML(true);                                  // Set email format to HTML
                 $mail->Subject = 'Reset Your Password';
-                $mail->Body    = "{$url}reset-password.php?key={$reset_token}&id={$userid}</b>";
-                $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                $mail->Body    = "Hi {$res['username']},<br><br>"
+                               . "We received a request to reset your password. Click the link below to choose a new one:<br><br>"
+                               . "<a href='{$reset_link}'>Reset My Password</a><br><br>"
+                               . "Or copy this URL into your browser:<br>{$reset_link}<br><br>"
+                               . "If you did not request this, you can safely ignore this email.";
+                $mail->AltBody = "Reset your password by visiting: {$reset_link}";
 
                 $mail->send();
                 $messages[] = 'Password Reset Email Sent, Follow the Instructions';
             } catch (Exception $e) {
-                echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                $errors[] = "Password reset email could not be sent. Mailer Error: {$mail->ErrorInfo}";
             }
         }else{
             $errors[] = 'Your Account is not available with in our activated accounts, please check with site Admin!';

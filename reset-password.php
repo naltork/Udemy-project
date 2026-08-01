@@ -5,12 +5,10 @@ session_start();
 include('includes/header.php'); 
 require_once('includes/connect.php');
 require_once('includes/smtp.php');
-
-$url = "http://localhost/Secure-User-Registration-Login-Reset-Password-Portal/";
-
 require 'PHPMailer-master/src/Exception.php';
 require 'PHPMailer-master/src/PHPMailer.php';
 require 'PHPMailer-master/src/SMTP.php';
+$reset_done=false;
 if(isset($_POST) & !empty($_POST)){
     if(empty($_POST['password'])){ $errors[] = 'Password field is Required';}else{
         if(empty($_POST['passwordr'])){ $errors[] = 'Repeat Password field is Required';}else{
@@ -52,13 +50,16 @@ if(isset($_POST) & !empty($_POST)){
 
     if(empty($errors)){
         // Update the password after submitting new password
-        $sql = "SELECT * FROM password_reset WHERE reset_token=:reset_token AND uid=:uid";
-        $result = $db->prepare($sql);
-        $values = array(':reset_token'      => $_POST['key'],
+        $count = 0;
+        if(!empty($_POST['key']) && !empty($_POST['id'])){
+            $sql = "SELECT * FROM password_reset WHERE reset_token=:reset_token AND uid=:uid";
+            $result = $db->prepare($sql);
+            $values = array(':reset_token'      => $_POST['key'],
                         ':uid'              => $_POST['id']
-                        );
-        $result->execute($values);
-        $count = $result->rowCount();
+                         );
+            $result->execute($values);
+            $count = $result->rowCount();
+        }
         if($count == 1){
             // update the password here
             $updsql = "UPDATE users SET password=:password, updated=NOW() WHERE id=:id";
@@ -86,6 +87,7 @@ if(isset($_POST) & !empty($_POST)){
                 $delresult = $db->prepare($delsql);
                 $delres = $delresult->execute(array($_POST['key']));
                 if($delres){
+                    $reset_done=true;
                     // send email
                     $mail = new PHPMailer(true);
 
@@ -101,22 +103,26 @@ if(isset($_POST) & !empty($_POST)){
 
                         //Recipients
                         $mail->setFrom($fromemail, $fromname);
-                        // TODO : update recipient email with dynamic email
                         $mail->addAddress($user['email'], $user['username']);     // Add a recipient
 
+                        
                         // Content
                         $mail->isHTML(true);                                  // Set email format to HTML
                         $mail->Subject = 'Password Updated';
-                        $mail->Body    = "Your Account Password Updated, Login to your account</b>";
-                        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+                        $mail->Body    = "Hi {$user['username']},<br><br>"
+                                       . "Your account password was just changed. You can now log in with your new password.<br><br>"
+                                       . "If you did not make this change, contact the site admin immediately.";
+                        $mail->AltBody = 'Your account password was just changed. You can now log in with your new password.';
 
                         $mail->send();
-                        $messages[] = 'Password Update Confirmation Email Sent';
-                        // we can redirect the user to login page
-                        header('location: login.php');
+                        $messages[] = 'Password Updated Successfully! A confirmation email has been sent.';
+                        $messages[] = "You can now <a href='login.php'>log in</a> with your new password.";
                     } catch (Exception $e) {
-                        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                        // password is already updated at this point - tell the user even if mail fails
+                        $messages[] = 'Password Updated Successfully! You can now <a href="login.php">log in</a> with your new password.';
+                        $errors[] = "Confirmation email could not be sent. Mailer Error: {$mail->ErrorInfo}";
                     }
+                        
                 }
 
             }
@@ -129,31 +135,36 @@ if(isset($_POST) & !empty($_POST)){
 $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
-//if(!isset($_POST) & empty($_POST)){
+$valid_token = false;
+if(!$reset_done){
     // fetch the user details from database and display those details in disabled input fields, username & email
-    $sql = "SELECT * FROM password_reset WHERE reset_token=:reset_token AND uid=:uid";
-    $result = $db->prepare($sql);
-    $values = array(':reset_token'      => $_GET['key'],
-                    ':uid'              => $_GET['id']
-                    );
-    $result->execute($values);
-    $count = $result->rowCount();
-    if($count == 1){
-        // Select SQL query to fetch user details from users table using user id
-        $usersql = "SELECT * FROM users WHERE id=? AND activate=1";
-        $userresult = $db->prepare($usersql);
-        $userresult->execute(array($_GET['id']));
-        $usercount = $userresult->rowCount();
-        $userres = $userresult->fetch(PDO::FETCH_ASSOC);
-        if($usercount == 1){
-            //$messages[] = "Do Nothing, display the details in form";
+    if(!empty($_GET['key']) && !empty($_GET['id'])){
+        $sql = "SELECT * FROM password_reset WHERE reset_token=:reset_token AND uid=:uid";
+        $result = $db->prepare($sql);
+        $values = array(':reset_token'      => $_GET['key'],
+                        ':uid'              => $_GET['id']
+                        );
+        $result->execute($values);
+        $count = $result->rowCount();
+        if($count == 1){
+            // Select SQL query to fetch user details from users table using user id
+            $usersql = "SELECT * FROM users WHERE id=? AND activate=1";
+            $userresult = $db->prepare($usersql);
+            $userresult->execute(array($_GET['id']));
+            $usercount = $userresult->rowCount();
+            $userres = $userresult->fetch(PDO::FETCH_ASSOC);
+            if($usercount == 1){
+                $valid_token = true;
+            }else{
+                $errors[] = "Your Account is not Active, Please activate before resetting the password";
+            }
         }else{
-            $errors[] = "Your Account is not Active, Please activate before resetting the password";
+            $errors[] = "There is some problem with Reset Token, Contact Site Admin!";
         }
     }else{
         $errors[] = "There is some problem with Reset Token, Contact Site Admin!";
     }
-//}
+}
 ?>
 <div class="row">
     <div class="col-md-4 col-md-offset-4">
@@ -171,19 +182,11 @@ $_SESSION['csrf_token_time'] = time();
                         echo "</div>";
                     }
                 ?>
-                <?php
-                    if(!empty($errors)){
-                        echo "<div class='alert alert-danger'>";
-                        foreach ($errors as $error) {
-                            echo "<span class='glyphicon glyphicon-remove'></span>&nbsp;". $error ."<br>";
-                        }
-                        echo "</div>";
-                    }
-                ?>
+                <?php if($valid_token){ ?>
                 <form role="form" method="post">
                     <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
-                    <input type="hidden" name="key" value="<?php echo $_GET['key']; ?>">
-                    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+                    <input type="hidden" name="key" value="<?php echo htmlspecialchars($_GET['key']); ?>">
+                    <input type="hidden" name="id" value="<?php echo htmlspecialchars($_GET['id']); ?>">
                     <fieldset>
                         <div class="form-group">
                             <input class="form-control" placeholder="User Name" name="username" type="text" autofocus disabled value="<?php if(isset($userres['username'])){ echo $userres['username']; } ?>">
@@ -201,6 +204,7 @@ $_SESSION['csrf_token_time'] = time();
                         <input type="submit" class="btn btn-lg btn-success btn-block" value="Change Password" />
                     </fieldset>
                 </form>
+                <?php } ?>
             </div>
         </div>
     </div>
