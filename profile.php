@@ -28,6 +28,24 @@ if($permres === false){ $permres = array(); }
 function can_show($data, $perms, $field, $perm){
     return !empty($data[$field]) && isset($perms[$perm]) && ($perms[$perm] == 1);
 }
+
+// Work out whether anything at all is visible. A profile whose owner has not
+// shared a single field would otherwise render as an empty card, which looks
+// like a broken page rather than a deliberately private profile.
+$profile_fields = array('profilepic' => 'show_pic', 'fname' => 'show_fname',
+                        'lname' => 'show_lname', 'gender' => 'show_gender',
+                        'age' => 'show_age', 'bio' => 'show_bio',
+                        'mobile' => 'show_mobile', 'email' => 'show_email',
+                        'fb' => 'show_fb', 'twitter' => 'show_twitter',
+                        'linkedin' => 'show_linkedin', 'blog' => 'show_blog',
+                        'website' => 'show_website');
+$has_visible_field = false;
+foreach($profile_fields as $field => $perm){
+    if(can_show($userres, $permres, $field, $perm)){
+        $has_visible_field = true;
+        break;
+    }
+}
 ?>
 <!-- Logged-in visitors get the sidebar, so the content needs the offset
      wrapper; guests get the plain wrapper instead. -->
@@ -39,6 +57,16 @@ function can_show($data, $perms, $field, $perm){
             <?php if($usercount != 1){ ?>
             <div class="alert alert-danger">
                 <span class="glyphicon glyphicon-remove"></span>&nbsp;No profile found for this user.
+            </div>
+            <?php }elseif(!$has_visible_field){ ?>
+            <div class="alert alert-info">
+                <span class="glyphicon glyphicon-lock"></span>&nbsp;<strong><?php echo htmlspecialchars($username); ?></strong>
+                has not shared any profile details yet.
+                <br><br>
+                If this is your profile, choose what to share on the
+                <a href="<?php echo $base_url; ?>permissions.php">My Permissions</a> page,
+                and fill in your details on the
+                <a href="<?php echo $base_url; ?>edit-profile.php">Edit Profile</a> page.
             </div>
             <?php }else{ ?>
             <div class="card hovercard">
