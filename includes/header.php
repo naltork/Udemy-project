@@ -23,6 +23,9 @@
 
     <!-- Navigation CSS -->
     <link href="<?php echo $base_url; ?>dist/css/navigation.css" rel="stylesheet">
+    
+    <!-- UAFS Theme -->
+    <link href="<?php echo $base_url; ?>dist/css/uafs-theme.css" rel="stylesheet">
 
 </head>
 

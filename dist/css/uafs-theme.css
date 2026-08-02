@@ -1,0 +1,301 @@
+/* ============================================================
+   UAFS Theme — University of Arkansas Fort Smith branding
+   Colors:  Maroon #8c1d40  |  Gold #C8991D  |  Light grey #f4f6f9
+   ============================================================ */
+
+/* ---------- Global ---------- */
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+a { color: #8c1d40; }
+a:hover { color: #C8991D; }
+
+/* ---------- Top Navbar ---------- */
+.navbar-default {
+    background-color: #8c1d40;
+    border-color: #6e1633;
+}
+.navbar-default .navbar-brand {
+    color: #fff;
+    font-weight: bold;
+    padding: 8px 15px;
+}
+.navbar-default .navbar-brand:hover {
+    color: #C8991D;
+}
+.navbar-default .navbar-brand img {
+    height: 34px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+.navbar-top-links > li > a {
+    color: #fff;
+}
+.navbar-top-links > li > a:hover,
+.navbar-top-links > li > a.active {
+    color: #C8991D;
+    background-color: rgba(255,255,255,0.05);
+}
+
+/* ---------- Sidebar ---------- */
+.navbar-default.sidebar {
+    background-color: #8c1d40;
+}
+.sidebar .nav > li > a {
+    color: rgba(255,255,255,0.85);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar .nav > li > a:hover,
+.sidebar .nav > li > a:focus,
+.sidebar .nav > li > a.active {
+    background-color: #C8991D;
+    color: #fff;
+}
+.sidebar .nav-second-level > li > a {
+    color: rgba(255,255,255,0.7);
+    padding-left: 37px;
+}
+.sidebar .nav-second-level > li > a:hover,
+.sidebar .nav-second-level > li > a.active {
+    background-color: #C8991D;
+    color: #fff;
+}
+.sidebar .nav-header {
+    color: #C8991D;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 12px 15px 6px;
+}
+
+/* ---------- Page Wrapper ---------- */
+#page-wrapper {
+    background-color: #f4f6f9;
+    border-left: 1px solid #ddd;
+    min-height: 100vh;
+}
+
+/* ---------- Welcome Banner ---------- */
+.welcome-banner {
+    background: linear-gradient(135deg, #8c1d40 0%, #a82550 100%);
+    color: #fff;
+    padding: 30px 25px;
+    margin: -15px -30px 25px -30px;
+    border-bottom: 4px solid #C8991D;
+}
+.welcome-banner h1 {
+    margin: 0 0 5px 0;
+    font-size: 28px;
+    font-weight: 300;
+}
+.welcome-banner p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 14px;
+}
+
+/* ---------- Stat Cards ---------- */
+.stat-card {
+    background: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #8c1d40;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.stat-card .stat-icon {
+    font-size: 32px;
+    color: #C8991D;
+    float: left;
+    margin-right: 15px;
+}
+.stat-card .stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8c1d40;
+}
+.stat-card .stat-label {
+    font-size: 12px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ---------- Content Panels ---------- */
+.uafs-panel {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+.uafs-panel .panel-title {
+    background-color: #8c1d40;
+    color: #fff;
+    padding: 12px 20px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.uafs-panel .panel-title i {
+    color: #C8991D;
+    margin-right: 8px;
+}
+.uafs-panel .panel-content {
+    padding: 20px;
+}
+
+/* ---------- Course Cards ---------- */
+.course-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: border-color 0.2s;
+}
+.course-card:hover {
+    border-color: #C8991D;
+}
+.course-card .course-code {
+    font-size: 11px;
+    color: #C8991D;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.course-card .course-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #8c1d40;
+    margin: 4px 0;
+}
+.course-card .course-meta {
+    font-size: 12px;
+    color: #777;
+}
+.course-card .course-meta i {
+    width: 14px;
+    text-align: center;
+    margin-right: 4px;
+}
+
+/* ---------- Calendar ---------- */
+.uafs-calendar {
+    width: 100%;
+    border-collapse: collapse;
+}
+.uafs-calendar th {
+    background-color: #8c1d40;
+    color: #fff;
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.uafs-calendar td {
+    text-align: center;
+    padding: 8px 4px;
+    border: 1px solid #eee;
+    font-size: 13px;
+    color: #555;
+}
+.uafs-calendar td.today {
+    background-color: #C8991D;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 3px;
+}
+.uafs-calendar td.empty {
+    background-color: #fafafa;
+}
+.uafs-calendar .cal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.uafs-calendar .cal-nav a {
+    color: #8c1d40;
+    font-weight: bold;
+    text-decoration: none;
+}
+.uafs-calendar .cal-nav a:hover {
+    color: #C8991D;
+}
+.uafs-calendar .cal-nav .cal-month {
+    font-size: 16px;
+    font-weight: 600;
+    color: #8c1d40;
+}
+
+/* ---------- Buttons ---------- */
+.btn-uafs {
+    background-color: #8c1d40;
+    border-color: #6e1633;
+    color: #fff;
+}
+.btn-uafs:hover, .btn-uafs:focus {
+    background-color: #C8991D;
+    border-color: #b5881a;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #8c1d40;
+    border-color: #6e1633;
+}
+.btn-success:hover, .btn-success:focus {
+    background-color: #C8991D;
+    border-color: #b5881a;
+}
+
+/* ---------- Login / Guest Pages ---------- */
+#guest-wrapper {
+    padding: 30px 15px;
+}
+.login-panel {
+    border-top: 3px solid #C8991D;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.login-panel .panel-heading {
+    background-color: #8c1d40;
+    color: #fff;
+}
+.login-panel .panel-title {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* ---------- Alerts ---------- */
+.alert-success {
+    background-color: #e8f5e9;
+    border-color: #c8e6c9;
+    color: #2e7d32;
+}
+.alert-danger {
+    background-color: #fbe9e7;
+    border-color: #ffccbc;
+    color: #c62828;
+}
+.alert-info {
+    background-color: #e3f2fd;
+    border-color: #bbdefb;
+    color: #1565c0;
+}
+
+/* ---------- Footer area ---------- */
+.page-footer {
+    text-align: center;
+    padding: 15px;
+    font-size: 12px;
+    color: #999;
+    border-top: 1px solid #eee;
+    margin-top: 30px;
+}

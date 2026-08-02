@@ -1,0 +1,21 @@
+/* Sidebar submenus are always expanded instead of toggled by metisMenu. */
+.sidebar .nav-second-level {
+    display: block;
+}
+
+/* Hide the leftover caret arrows that used to indicate collapsible menus. */
+.sidebar .nav .fa.arrow {
+    display: none;
+}
+
+/* Top navbar links, used for both the logged-in and guest menus. */
+.navbar-top-links > li > a {
+    padding: 15px;
+    min-height: 50px;
+}
+
+/* Guest pages (login, register, reset) have no sidebar, so their content
+   must not be indented the way #page-wrapper is on sidebar pages. */
+#guest-wrapper {
+    padding: 30px 15px;
+}
